@@ -30,6 +30,10 @@ var opt_map = {
 	alias: 'nbuf',
 	describe: 'number of buffers to be written to the socket',
 	default: 2048 * 1024},
+    'f' : {
+	alias: 'format',
+	describe: 'report throughput in terms of either "bytes" or "bits"',
+	default: 'bytes'},
     'D' : {
 	alias: 'nodelay',
 	describe: 'set TCP_NODELAY socket option',
@@ -59,6 +63,12 @@ var argv = require('optimist')
 		} else {
 			throw new Error('must specify either transmit ' +
 			    'or receive mode');
+		}
+
+		if ((argv.format.toLowerCase() != 'bytes') &&
+		    (argv.format.toLowerCase() != 'bits')) {
+			throw new Error('invalid format specified - must use' +
+			    ' either bits or bytes');
 		}
 	})
 	.argv;
@@ -231,10 +241,26 @@ if (argv.receive) {
 }
 
 function print_throughput(snd_recv, bytes, seconds) {
+
+	var datavalue = 0;
+	var unit_base = 0;
+	var unit_suffix = '';
+
+	if (argv.format == 'bits') {
+		datavalue = bytes * 8;
+		unit_base = 10;
+		unit_suffix = 'b';
+	} else {
+		datavalue = bytes;
+		unit_base = 2;
+		unit_suffix = 'B';
+	}
+
 	console.log('ttcp-%s: %s in %d seconds = %s +++',
 	    snd_recv,
-	    ns.scale({ value: bytes, powerOf: 2, maxLen: 6 }) + 'B',
+	    ns.scale({ value: datavalue, powerOf: unit_base, maxLen: 6 }) +
+	        unit_suffix,
 	    seconds,
-	    ns.scale({ value: bytes / seconds, powerOf: 2, maxLen: 6 }) +
-	    'B/sec');
+	    ns.scale({ value: datavalue / seconds, powerOf: unit_base,
+	        maxLen: 6 }) + unit_suffix + '/sec');
 };
