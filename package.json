@@ -1,0 +1,21 @@
+{
+  "author": "Michael Harsch <mike@harschsystems.com>",
+  "name": "ttcp",
+  "description": "node port of the venerable ttcp network performance tool",
+  "version": "0.0.1",
+  "homepage": "https://github.com/mharsch/node-ttcp/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mharsch/node-ttcp.git"
+  },
+  "bin": "./ttcp.js",
+  "dependencies":
+  { "optimist" : ">=0.3.4",
+    "numscale" : ">=0.0.3"
+  },
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
